@@ -72,18 +72,32 @@ const todos = [
 //http has a method called 'createServer()' that takes a function
     //the function takes a req object and res object
 const server = http.createServer((req, res) => {
-    
     //We have to dictate what the content-type is being sent
         //So the browser can formulate an appropriate response
         //e.g.content-type: text/html, then browser renders the html
 
     //In this course, we won't be sending HTML or templates
         //Instead, our API will be responding with JSON
-    res.setHeader('Content-Type', 'application/json');
+    // res.setHeader('Content-Type', 'application/json');
 
     //X-Powered-By is not a standard header
         //It specifies the technology supporting the web application
-    res.setHeader('X-Powered-By', 'Node.js');
+    // res.setHeader('X-Powered-By', 'Node.js');
+
+    //setHeader() sets an individual header
+    //writeHead() writes multiple headers and sets the status code as well
+
+    //Set HTTP code using statusCode
+        //res.statusCode = 404;
+
+    //writeHead() instead of setHeader()
+        //writeHead() takes a status code and an object of key:value pairs of headers
+    res.writeHead(404, {
+        'Content-Type': 'application/json',
+        'X-Powered-By': 'Node.js'
+    });
+
+
 
     //You can have multiple res.write()'s
         // res.write('<h1>ALOHA</h1>');
@@ -97,16 +111,32 @@ const server = http.createServer((req, res) => {
             //const url = req.url;
             //const method = req.method;
     const { headers, url, method } = req;
-
     console.log(headers, url, method);
 
     //res.end() will set status code as 200 (as long as there are no errors)
     //Note: JSON has double quotes around all the keys and values that are strings.
         //So we have to JSON.stringify whwatever we want to send as part of the response
-    res.end(JSON.stringify({
-        success: true,
-        data: todos
-    }));
+
+    //Successful response:
+        // res.statusCode = 200;
+        // res.end(
+        //     JSON.stringify({
+        //         success: true,
+        //         data: todos
+        //     })
+        // );
+
+    //Unsuccessful response:
+        res.end(
+            JSON.stringify({
+                success: false,
+                error: 'Not Found',
+                data: null
+            })
+        );
+    //In any response, we have to send back a status code
+        //and some data or an error message if data doesnt exist
+        //or it was a bad request.
 });
 
 const PORT = 5000
